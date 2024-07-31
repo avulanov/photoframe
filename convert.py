@@ -13,7 +13,10 @@ parser.add_argument('image_file', type=str, help='Input image file')
 parser.add_argument('--dir', choices=['landscape', 'portrait'], help='Image direction (landscape or portrait)')
 parser.add_argument('--mode', choices=['scale', 'cut'], default='scale', help='Image conversion mode (scale or cut)')
 parser.add_argument('--dither', type=int, choices=[Image.NONE, Image.FLOYDSTEINBERG], default=Image.FLOYDSTEINBERG, help='Image dithering algorithm (NONE(0) or FLOYDSTEINBERG(3))')
-parser.add_argument('--enhance', choices=['1', '2', '3'], default='2', help='image enhance')
+parser.add_argument('--color', type=float, default=2.0, help='image color, 0.0 b&w, 1.0 original')
+parser.add_argument('--contrast', type=float, default=1.0, help='image contrast, 1.0 original')
+parser.add_argument('--brightness', type=float, default=1.0, help='image brightness, 1.0 orignal')
+parser.add_argument('--sharpness', type=float, default=1.0, help='image sharpness, 1.0 original')
 
 # Parse command line arguments
 args = parser.parse_args()
@@ -23,7 +26,10 @@ input_filename = args.image_file
 display_direction = args.dir
 display_mode = args.mode
 display_dither = Image.Dither(args.dither)
-display_enhance = args.enhance
+display_color = args.color
+display_contrast = args.contrast
+display_brightness = args.brightness
+display_sharpness = args.sharpness
 
 # Check whether the input file exists
 if not os.path.isfile(input_filename):
@@ -32,8 +38,14 @@ if not os.path.isfile(input_filename):
 
 # Read input image
 input_image = Image.open(input_filename)
-converter = ImageEnhance.Color(input_image)
-input_image = converter.enhance(int(display_enhance))
+enhancer_color = ImageEnhance.Color(input_image)
+input_image = enhancer_color.enhance(display_color)
+enhancer_contrast = ImageEnhance.Contrast(input_image)
+input_image = enhancer_contrast.enhance(display_contrast)
+enhancer_brightness = ImageEnhance.Brightness(input_image)
+input_image = enhancer_brightness.enhance(display_brightness)
+enhancer_sharpness = ImageEnhance.Sharpness(input_image)
+input_image = enhancer_sharpness.enhance(display_sharpness)
 
 
 # Get the original image size
