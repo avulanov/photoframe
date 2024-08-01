@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(description='Process some images.')
 # Add orientation parameter
 parser.add_argument('image_file', type=str, help='Input image file')
 parser.add_argument('--dir', choices=['landscape', 'portrait'], help='Image direction (landscape or portrait)')
+parser.add_argument('--file_suffix', type=str, default='_frame', help='Output file suffix')
 parser.add_argument('--mode', choices=['scale', 'cut'], default='scale', help='Image conversion mode (scale or cut)')
 parser.add_argument('--dither', type=int, choices=[Image.NONE, Image.FLOYDSTEINBERG], default=Image.FLOYDSTEINBERG, help='Image dithering algorithm (NONE(0) or FLOYDSTEINBERG(3))')
 parser.add_argument('--color', type=float, default=2.0, help='image color, 0.0 b&w, 1.0 original')
@@ -24,6 +25,7 @@ args = parser.parse_args()
 # Get input parameter
 input_filename = args.image_file
 display_direction = args.dir
+file_suffix = args.file_suffix
 display_mode = args.mode
 display_dither = Image.Dither(args.dither)
 display_color = args.color
@@ -102,7 +104,7 @@ pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,
 quantized_image = resized_image.quantize(dither=display_dither, palette=pal_image).convert('RGB')
 
 # Save output image
-output_filename = os.path.splitext(input_filename)[0] + '_' + display_mode + '_output.bmp'
+output_filename = os.path.splitext(input_filename)[0] + '_' + display_mode + file_suffix + '.bmp'
 quantized_image.save(output_filename)
 print(f'Successfully converted {input_filename} to {output_filename}')
 
