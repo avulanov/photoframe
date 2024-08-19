@@ -14,7 +14,7 @@ parser.add_argument('--dir', choices=['landscape', 'portrait'], help='Image dire
 parser.add_argument('--file_suffix', type=str, default='_frame', help='Output file suffix')
 parser.add_argument('--mode', choices=['scale', 'cut'], default='scale', help='Image conversion mode (scale or cut)')
 parser.add_argument('--dither', type=int, choices=[Image.NONE, Image.FLOYDSTEINBERG], default=Image.FLOYDSTEINBERG, help='Image dithering algorithm (NONE(0) or FLOYDSTEINBERG(3))')
-parser.add_argument('--color', type=float, default=2.0, help='image color, 0.0 b&w, 1.0 original')
+parser.add_argument('--color', type=float, default=2.0, help='image color saturation, 0.0 b&w, 1.0 original, 2.0 looks more vivid on ePaper')
 parser.add_argument('--contrast', type=float, default=1.0, help='image contrast, 1.0 original')
 parser.add_argument('--brightness', type=float, default=1.0, help='image brightness, 1.0 orignal')
 parser.add_argument('--sharpness', type=float, default=1.0, help='image sharpness, 1.0 original')
