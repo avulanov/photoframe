@@ -18,7 +18,7 @@ parser.add_argument('--color', type=float, default=2.0, help='image color, 0.0 b
 parser.add_argument('--contrast', type=float, default=1.0, help='image contrast, 1.0 original')
 parser.add_argument('--brightness', type=float, default=1.0, help='image brightness, 1.0 orignal')
 parser.add_argument('--sharpness', type=float, default=1.0, help='image sharpness, 1.0 original')
-parser.add_argument('--num_colors', type=int, default=7, help='num colors, 5,6,7')
+parser.add_argument('--num_colors', type=int, default=6, help='num colors: 5 - BWRGB, 6 - BWRGBY (like Spectra 6, looks better than 7), 7 - BWRGBYO (ACeP)')
 
 # Parse command line arguments
 args = parser.parse_args()
