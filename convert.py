@@ -18,6 +18,7 @@ parser.add_argument('--color', type=float, default=2.0, help='image color, 0.0 b
 parser.add_argument('--contrast', type=float, default=1.0, help='image contrast, 1.0 original')
 parser.add_argument('--brightness', type=float, default=1.0, help='image brightness, 1.0 orignal')
 parser.add_argument('--sharpness', type=float, default=1.0, help='image sharpness, 1.0 original')
+parser.add_argument('--num_colors', type=int, default=7, help='num colors, 5,6,7')
 
 # Parse command line arguments
 args = parser.parse_args()
@@ -32,6 +33,7 @@ display_color = args.color
 display_contrast = args.contrast
 display_brightness = args.brightness
 display_sharpness = args.sharpness
+num_colors = args.num_colors
 
 # Check whether the input file exists
 if not os.path.isfile(input_filename):
@@ -98,7 +100,12 @@ elif display_mode == 'cut':
 
 # Create a palette object
 pal_image = Image.new("P", (1,1))
-pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,255,0, 255,128,0) + (0,0,0)*249)
+if num_colors == 7:
+    pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,255,0, 255,128,0) + (0,0,0)*249)
+elif num_colors == 6:
+    pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,255,0,) + (0,0,0)*250)
+elif num_colors == 5:
+    pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0) + (0,0,0)*251)
   
 # The color quantization and dithering algorithms are performed, and the results are converted to RGB mode
 quantized_image = resized_image.quantize(dither=display_dither, palette=pal_image).convert('RGB')
