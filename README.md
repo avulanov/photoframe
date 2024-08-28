@@ -23,7 +23,7 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
 * Less colors
     * Using 6 colors (w/o orange) seems to visually look better. Orange seems to be used a lot by dithering algorithm since it falls "between" main colors. Also, new e-ink Spectra 6 screen uses only 6 colors too.
     * Using 5 colors (w/o orange and yellow) is worse. Yellow is one of the main colors in CMY.  
-* More colors
+* More colors (TODO!)
     * Use custom waveform to force eink produce more colors. Especially, we want to get the remaining from CMY - cyan (for the blue sky) and magenta. But also, equally spaced colors in between to avoid biasing we saw for orange.
     * My understanding is that it takes Z frames to refresh the screen. Eink has lookup table keyed by x->y (from color x to y) with sequence of voltage to apply on each frame to get from color x to color y. We can get the original table (LUT) and play with it. Only some displays support using custom LUT. The one used in the photophrame does. This repo has some discussion of the approach https://github.com/Modos-Labs/Glider and code can be found in https://github.com/zephray/driving-lcds/tree/main/ac057tc1 (for similar screen with smaller diagonal). Theoretically, we can replace epd* files in the firmware to check that code on the photoframe. 
 
