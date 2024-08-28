@@ -19,7 +19,7 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     * Denoising introduces blurring.
 * Dithering
     * More algos: https://github.com/hbldh/hitherdither. Did not see much difference, maybe Atkinson lossy dithering gives marginal impact.
-    * Gamma-aware: https://www.nayuki.io/page/gamma-aware-image-dithering. Human eye can distinguish shades of darker colors better. Did not see much difference probably due to low number of colors.
+    * Gamma-aware: https://www.nayuki.io/page/gamma-aware-image-dithering. Human eye can distinguish shades of darker colors better. Tried in by adding conversion to linear color space to the code with multiple dithering algorithms. Did not see much difference probably due to low number of colors. `lnr = rgb / 255... lnr = np.where(lnr <= 0.04045, lnr / 12.92, ((lnr +  0.055) / 1.055)**2.4)`
 * Less colors
     * Using 6 colors (w/o orange) seems to visually look better. Orange seems to be used a lot by dithering algorithm since it falls "between" main colors. Also, new e-ink Spectra 6 screen uses only 6 colors too.
     * Using 5 colors (w/o orange and yellow) is worse. Yellow is one of the main colors in CMY.  
