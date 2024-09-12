@@ -53,7 +53,7 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     EPD_7IN3F_SendData(0x5F);
     EPD_7IN3F_SendData(0x69);
 ```
-* We try to change 0x69 to 0xE9 (set 8th bit), hope that IC has the same registers for LUT (0x21-0x29) and waveform looks similar (since its the same ACeP tech).
+* We try to change 0x69 to 0xE9 (set 8th bit), expecting that it will enable IC to use LUT from registers. Then we hope that IC has the same registers for LUT (0x21-0x29) as in 5.65 screen and waveform looks similar (since its the same ACeP tech).
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
