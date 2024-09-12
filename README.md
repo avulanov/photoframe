@@ -32,7 +32,7 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
 * EPD has a lookup table (LUT) with color as a key and a list of voltage impulses as a value (+/- and value). It takes Z frames to refresh the screen. The i-th impulse is applied at the i-th frame to a target pixel. Physically, eink particles of certain color move to front depending on the charge sign. Also, some particles move faster than the others due to their size. This gives the final visible color.
 * There are 5 particle colors: BWCMY. The waveform LUT is designed to show 7 colors: BWRGBYO. Interestingly, it does not have Cyan or Magenta.
 * LUT is stored in IC driver flash. IC driver is connected directly to the screen and via SPI interface to the driving board.
-* IC driver has an API exposed to the driving board and can issue commands such as init the screen, show a picture, or sleep etc. EPD producer does not provide neither IC API specification nor IC model. Though EPD producer provide example code how to use the API. For example, panel setting (PSR) for [5.65 ACeP](https://github.com/waveshareteam/e-Paper/blob/master/RaspberryPi_JetsonNano/c/lib/e-Paper/EPD_5in65f.c0 looks as follows:
+* IC driver has an API exposed to the driving board and can issue commands such as init the screen, show a picture, or sleep etc. EPD producer does not provide neither IC API specification nor IC model. Though EPD producer provide example code how to use the API. For example, panel setting (PSR) for [5.65 ACeP](https://github.com/waveshareteam/e-Paper/blob/master/RaspberryPi_JetsonNano/c/lib/e-Paper/EPD_5in65f.c) looks as follows:
 ```
     EPD_5IN65F_SendCommand(0x00);
     EPD_5IN65F_SendData(0xEF);
@@ -46,9 +46,13 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     * The command to enable loading LUT from IC registers: done via PSR (panel setting) command (0x00): set 8th bit (0x88 instead of 0x08).
     * IC registers for colors are 0x21-0x28 (8th color is 'special' for screen clear).
     * Stock LUT
-* The photoframe has 7.3 inch ACeP. The naive expectations are that all three steps required should be similar to 5.65 EPD. In fact, IC specs for different EPDs from https://www.good-display.com/companyfile/5/#c_portalResCompanyFile_list-15878877704403956-1 and  https://github.com/CursedHardware/epd-driver-ic looks fairly similar. 
-    * The command to enable loading LUT from IC registers:
-
+* The photoframe has 7.3 inch ACeP. The naive expectations are that all three steps required should be similar to 5.65 EPD. In fact, IC specs for different EPDs from https://www.good-display.com/companyfile/5/#c_portalResCompanyFile_list-15878877704403956-1 and  https://github.com/CursedHardware/epd-driver-ic looks fairly similar. For example, panel setting (PSR) for Photoframe screen [7.3 ACeP](https://github.com/waveshareteam/e-Paper/blob/master/RaspberryPi_JetsonNano/c/lib/e-Paper/EPD_7in3f.c) looks as follows:
+```
+    EPD_7IN3F_SendCommand(0x00);
+    EPD_7IN3F_SendData(0x5F);
+    EPD_7IN3F_SendData(0x69);
+```
+* So, we try to change 0x69 to 0xE9 (set 8th bit), hope that IC has the same registers for LUT (0x21-0x29) and waveform looks similar (since its the same ACeP tech).
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
