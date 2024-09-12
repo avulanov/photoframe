@@ -39,20 +39,21 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     EPD_5IN65F_SendData(0x08);
 ```
 * IC drivers have capability to use LUT from the IC registers. So, in order to use custom LUT, one needs the following info:
-    * The command to enable loading LUT from IC registers.
-    * The list (addresses) of IC registers.
-    * Stock LUT, or an example of a waveform, to be able to experiment with its customization.
+    * (1) The command to enable loading LUT from IC registers.
+    * (2) The list (addresses) of IC registers.
+    * (3) Stock LUT, or an example of a waveform, to be able to experiment with its customization.
 * For example, https://hackaday.io/project/179058-understanding-acep-tecnology explains that 5.65 ACeP display uses SPD1656 display driver, which has a pdf with specification, which explains which bit parameter to set to enable custom LUT (LUT_EN or LUT_SEL) during panel setting, the addresses of the registers for LUT, and the size of the content. They also were able to get the original LUT by some soldering and reading back the LUT flash. Code can be found in https://github.com/ts-manuel/Understanding-ACeP-Tecnology/tree/master. There is another example with the same screen in https://github.com/zephray/driving-lcds/tree/main/ac057tc1.
     * The command to enable loading LUT from IC registers: done via PSR (panel setting) command (0x00): set 8th bit (0x88 instead of 0x08).
     * IC registers for colors are 0x21-0x28 (8th color is 'special' for screen clear).
     * Stock LUT
-* The photoframe has 7.3 inch ACeP. The naive expectations are that all three steps required should be similar to 5.65 EPD. In fact, IC specs for different EPDs from https://www.good-display.com/companyfile/5/#c_portalResCompanyFile_list-15878877704403956-1 and  https://github.com/CursedHardware/epd-driver-ic looks fairly similar. For example, panel setting (PSR) for Photoframe screen [7.3 ACeP](https://github.com/waveshareteam/e-Paper/blob/master/RaspberryPi_JetsonNano/c/lib/e-Paper/EPD_7in3f.c) looks as follows:
+* The photoframe has 7.3 inch ACeP. The naive expectations are that all three steps required should be similar to 5.65 EPD. In fact, IC specs for different EPDs from https://www.good-display.com/companyfile/5/#c_portalResCompanyFile_list-15878877704403956-1 and  https://github.com/CursedHardware/epd-driver-ic looks fairly similar.
+* Step (1). Panel setting (PSR) for Photoframe screen [7.3 ACeP](https://github.com/waveshareteam/e-Paper/blob/master/RaspberryPi_JetsonNano/c/lib/e-Paper/EPD_7in3f.c) looks as follows:
 ```
     EPD_7IN3F_SendCommand(0x00);
     EPD_7IN3F_SendData(0x5F);
     EPD_7IN3F_SendData(0x69);
 ```
-* So, we try to change 0x69 to 0xE9 (set 8th bit), hope that IC has the same registers for LUT (0x21-0x29) and waveform looks similar (since its the same ACeP tech).
+* We try to change 0x69 to 0xE9 (set 8th bit), hope that IC has the same registers for LUT (0x21-0x29) and waveform looks similar (since its the same ACeP tech).
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
