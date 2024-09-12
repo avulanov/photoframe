@@ -27,14 +27,18 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     * Use custom waveform to force eink produce more colors. Discussed in a dedicated section
 
 ## More colors
-   * Use custom waveform to force eink produce more colors. Especially, we want to get the remaining from CMY - cyan (for the blue sky) and magenta. But also, equally spaced colors in between to avoid biasing we saw for orange.
-   * Great explanation about waveform and their usage in EPD can be found in https://hackaday.io/project/179058-understanding-acep-tecnology and https://github.com/Modos-Labs/Glider.
-   * EPD has a lookup table (LUT) with color as a key and a list of voltage impulses as a value (+/- and value). It takes Z frames to refresh the screen. The i-th impulse is applied at the i-th frame to a target pixel. Physically, eink particles of certain color move to front depending on the charge sign. Also, some particles move faster than the others due to their size. This gives the final visible color.
-   * There are 5 particle colors: BWCMY. The waveform LUT is designed to show 7 colors: BWRGBYO. Interestingly, it does not have Cyan or Magenta.
-   * LUT is stored in IC driver flash. IC driver is connected directly to the screen and via SPI interface to the driving board.
-   * IC driver has an API exposed to the driving board and can issue commands such as init the screen, show a picture, or sleep etc. The example code is provided by the EPD producer. It looks as follows: 'EPD_7IN3F_SendCommand(0x00); EPD_7IN3F_SendData(0x5F); EPD_7IN3F_SendData(0x69);'. EPD producer does not provide API specification. 
-   *  
-   * My understanding is that it takes Z frames to refresh the screen. Eink has lookup table keyed by x->y (from color x to y) with sequence of voltage to apply on each frame to get from color x to color y. We can get the original table (LUT) and play with it. Only some displays support using custom LUT. The one used in the photophrame does. This repo has some discussion of the approach https://github.com/Modos-Labs/Glider and code can be found in https://github.com/zephray/driving-lcds/tree/main/ac057tc1 (for similar screen with smaller diagonal). Theoretically, we can replace epd* files in the firmware to check that code on the photoframe. 
+* Use custom waveform to force eink produce more colors. Especially, we want to get the remaining from CMY - cyan (for the blue sky) and magenta. But also, equally spaced colors in between to avoid biasing we saw for orange.
+* Great explanation about waveform and their usage in EPD can be found in https://hackaday.io/project/179058-understanding-acep-tecnology and https://github.com/Modos-Labs/Glider.
+* EPD has a lookup table (LUT) with color as a key and a list of voltage impulses as a value (+/- and value). It takes Z frames to refresh the screen. The i-th impulse is applied at the i-th frame to a target pixel. Physically, eink particles of certain color move to front depending on the charge sign. Also, some particles move faster than the others due to their size. This gives the final visible color.
+* There are 5 particle colors: BWCMY. The waveform LUT is designed to show 7 colors: BWRGBYO. Interestingly, it does not have Cyan or Magenta.
+* LUT is stored in IC driver flash. IC driver is connected directly to the screen and via SPI interface to the driving board.
+* IC driver has an API exposed to the driving board and can issue commands such as init the screen, show a picture, or sleep etc. The example code is provided by the EPD producer. It looks as follows: 'EPD_7IN3F_SendCommand(0x00); EPD_7IN3F_SendData(0x5F); EPD_7IN3F_SendData(0x69);'. EPD producer does not provide API specification. 
+* IC drivers have capability to use LUT from the IC registers. So, in order to use custom LUT, one has to have the following info:
+    * The command to enable loading LUT from IC registers.
+    * The list (addresses) of IC registers.
+    * Stock LUT, or an example of a waveform, to be able to experiment with its customization.
+* For example, https://hackaday.io/project/179058-understanding-acep-tecnology explains that 5.65 ACeP display uses SPD1656 display driver, which has a pdf with specification, which explains which bit parameter to set to enable custom LUT (LUT_EN or LUT_SEL) during display init, the addresses of the registers for LUT, and the size of the content. They also were able to get the original LUT by some soldering and reading back the LUT flash. Code can be found in https://github.com/ts-manuel/Understanding-ACeP-Tecnology/tree/master. There is another example with the same screen in https://github.com/zephray/driving-lcds/tree/main/ac057tc1.
+* The photoframe has 7.3 inch ACeP. The naive expectations are that all three steps required should be similar to 5.65 EPD. In fact, IC specs for different EPDs from https://www.good-display.com/companyfile/5/#c_portalResCompanyFile_list-15878877704403956-1 and  https://github.com/CursedHardware/epd-driver-ic looks fairly similar. 
 
 ## How to add photos
 * Download jpg
