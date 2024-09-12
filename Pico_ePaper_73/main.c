@@ -16,8 +16,9 @@ extern char pathName[];
 Mode 0: Automatically get pic folder names and sort them
 Mode 1: Automatically get pic folder names but not sorted
 Mode 2: pic folder name is not automatically obtained, users need to create fileList.txt file and write the picture name in TF card by themselves
+Mode 3: Same as Mode 1 but with a randomized order - added by @tcellerier
 */
-#define Mode 2
+#define Mode 3
 
 
 float measureVBAT(void)
@@ -45,11 +46,13 @@ void chargeState_callback()
 void run_display(Time_data Time, Time_data alarmTime, char hasCard)
 {
     if(hasCard) {
-        setFilePath();
-        EPD_7in3f_display_BMP(pathName, measureVBAT());   // display bmp
+        EPD_7in3f_display_7colors();
+        //setFilePath();
+        //EPD_7in3f_display_BMP(pathName, measureVBAT());   // display bmp
     }
     else {
-        EPD_7in3f_display(measureVBAT());
+        EPD_7in3f_display_7colors();
+        //EPD_7in3f_display(measureVBAT());
     }
 
     PCF85063_clear_alarm_flag();    // clear RTC alarm flag
@@ -58,22 +61,24 @@ void run_display(Time_data Time, Time_data alarmTime, char hasCard)
 
 int main(void)
 {
-    Time_data Time = {2024-2000, 3, 31, 0, 0, 0};
-    Time_data alarmTime = Time;
-    // alarmTime.seconds += 10;
-    // alarmTime.minutes += 30;
-    alarmTime.hours +=24;
     char isCard = 0;
+
+    /* Timer Parameters */ 
+    Time_data Time = {2023-1970, 4, 1, 8, 30, 50};
+    Time_data alarmTime = Time;
+    //alarmTime.minutes += 30;
+    alarmTime.hours += 12;
+    //alarmTime.days += 1;
   
     printf("Init...\r\n");
     if(DEV_Module_Init() != 0) {  // DEV init
         return -1;
     }
-    
+
     watchdog_enable(8*1000, 1);    // 8s
-    DEV_Delay_ms(1000);
     PCF85063_init();    // RTC init
     rtcRunAlarm(Time, alarmTime);  // RTC run alarm
+    
     gpio_set_irq_enabled_with_callback(CHARGE_STATE, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, chargeState_callback);
 
     if(measureVBAT() < 3.1) {   // battery power is low
@@ -103,6 +108,11 @@ int main(void)
         if(Mode == 2)
         {
             file_cat();
+        }
+        if(Mode == 3)
+        {
+            sdScanDir();
+            file_shuffle();
         }
         
     }

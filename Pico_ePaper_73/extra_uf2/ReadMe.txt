@@ -2,6 +2,7 @@ Mode selection:
 	Mode 0: automatically get PIC and sorted the name of the folder pictures
 	Mode 1: Automatically get pic folder names but not sorted
 	Mode 2: don't automatically get PIC folder in the name of the images, the user needs to himself in the TF card created under the root directory of the fileList. TXT file and write images in the file name
+	Mode 3: Same as Mode 1 but with a randomized order - added by @tcellerier - 2023-11
 
 
 

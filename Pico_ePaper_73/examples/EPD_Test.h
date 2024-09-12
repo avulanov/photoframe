@@ -30,6 +30,8 @@
 #ifndef _EPD_TEST_H_
 #define _EPD_TEST_H_
 
+int EPD_7in3f_display_palette(void);
+int EPD_7in3f_display_7colors(void);
 int EPD_7in3f_test(void);
 
 int EPD_7in3f_display(float vol);

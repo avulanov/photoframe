@@ -3,7 +3,7 @@
 
 #include "DEV_Config.h"
 
-#define fileNumber 100
+#define fileNumber 2000
 #define fileLen 100
 
 char sdTest(void);
@@ -21,5 +21,6 @@ void setFilePath(void);
 
 void updatePathIndex(void);
 void file_sort();
+void file_shuffle();
 
 #endif

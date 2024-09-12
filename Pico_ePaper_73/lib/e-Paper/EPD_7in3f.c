@@ -212,6 +212,169 @@ void EPD_7IN3F_Init(void)
 	
 }
 
+void EPD_7IN3F_Init_with_custom_LUT(void)
+{
+	EPD_7IN3F_Reset();
+	EPD_7IN3F_ReadBusyH();
+	DEV_Delay_ms(30);
+
+	EPD_7IN3F_SendCommand(0xAA);    // CMDH
+	EPD_7IN3F_SendData(0x49);
+	EPD_7IN3F_SendData(0x55);
+	EPD_7IN3F_SendData(0x20);
+	EPD_7IN3F_SendData(0x08);
+	EPD_7IN3F_SendData(0x09);
+	EPD_7IN3F_SendData(0x18);
+
+	EPD_7IN3F_SendCommand(0x01);
+	EPD_7IN3F_SendData(0x3F);
+	EPD_7IN3F_SendData(0x00);
+	EPD_7IN3F_SendData(0x32);
+	EPD_7IN3F_SendData(0x2A);
+	EPD_7IN3F_SendData(0x0E);
+	EPD_7IN3F_SendData(0x2A);
+
+	EPD_7IN3F_SendCommand(0x00);
+	EPD_7IN3F_SendData(0x5F);
+	//EPD_7IN3F_SendData(0x69);
+    // try setting 8th bit
+    EPD_7IN3F_SendData(0xE9);
+
+	EPD_7IN3F_SendCommand(0x03);
+	EPD_7IN3F_SendData(0x00);
+	EPD_7IN3F_SendData(0x54);
+	EPD_7IN3F_SendData(0x00);
+	EPD_7IN3F_SendData(0x44); 
+
+	EPD_7IN3F_SendCommand(0x05);
+	EPD_7IN3F_SendData(0x40);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x2C);
+
+	EPD_7IN3F_SendCommand(0x06);
+	EPD_7IN3F_SendData(0x6F);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x22);
+
+	EPD_7IN3F_SendCommand(0x08);
+	EPD_7IN3F_SendData(0x6F);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x1F);
+	EPD_7IN3F_SendData(0x22);
+
+	EPD_7IN3F_SendCommand(0x13);    // IPC
+	EPD_7IN3F_SendData(0x00);
+	EPD_7IN3F_SendData(0x04);
+
+	EPD_7IN3F_SendCommand(0x30);
+	EPD_7IN3F_SendData(0x3C);
+
+	EPD_7IN3F_SendCommand(0x41);     // TSE
+	EPD_7IN3F_SendData(0x00);
+
+	EPD_7IN3F_SendCommand(0x50);
+	EPD_7IN3F_SendData(0x3F);
+
+	EPD_7IN3F_SendCommand(0x60);
+	EPD_7IN3F_SendData(0x02);
+	EPD_7IN3F_SendData(0x00);
+
+	EPD_7IN3F_SendCommand(0x61);
+	EPD_7IN3F_SendData(0x03);
+	EPD_7IN3F_SendData(0x20);
+	EPD_7IN3F_SendData(0x01); 
+	EPD_7IN3F_SendData(0xE0);
+
+	EPD_7IN3F_SendCommand(0x82);
+	EPD_7IN3F_SendData(0x1E); 
+
+	EPD_7IN3F_SendCommand(0x84);
+	EPD_7IN3F_SendData(0x00);
+
+	EPD_7IN3F_SendCommand(0x86);    // AGID
+	EPD_7IN3F_SendData(0x00);
+
+	EPD_7IN3F_SendCommand(0xE3);
+	EPD_7IN3F_SendData(0x2F);
+
+	EPD_7IN3F_SendCommand(0xE0);   // CCSET
+	EPD_7IN3F_SendData(0x00); 
+
+	EPD_7IN3F_SendCommand(0xE6);   // TSSET
+	EPD_7IN3F_SendData(0x00);
+
+}
+
+void EPD_LoadLUT_ts_manuel(void) {
+	//Stock LUTs
+	LOAD_VCM_LUT(LUT_STOCK_VCOM);
+	LOAD_CLR_LUT(0, LUT_STOCK_COLOR_0);	//Black
+	LOAD_CLR_LUT(1, LUT_STOCK_COLOR_1);	//Blue
+	LOAD_CLR_LUT(2, LUT_STOCK_COLOR_2);	//White
+	LOAD_CLR_LUT(3, LUT_STOCK_COLOR_3);	//Green
+	LOAD_CLR_LUT(4, LUT_STOCK_COLOR_4);	//Red
+	LOAD_CLR_LUT(5, LUT_STOCK_COLOR_5);	//Yellow
+	LOAD_CLR_LUT(6, LUT_STOCK_COLOR_6);	//Orange
+	LOAD_CLR_LUT(7, LUT_STOCK_COLOR_7);	//Clean
+	LOAD_XON_LUT(LUT_STOCK_XON);
+}
+
+void EPD_LoadLUT_zephray_lut0(void) {
+	//Stock LUTs
+	LOAD_VCM_LUT(lut0_vcom_20);
+	LOAD_CLR_LUT(0, lut0_c0_21);	//
+	LOAD_CLR_LUT(1, lut0_c1_23);	//
+	LOAD_CLR_LUT(2, lut0_c2_24);	//
+	LOAD_CLR_LUT(3, lut0_c3_22);	//
+	LOAD_CLR_LUT(4, lut0_c4_25);	//
+	LOAD_CLR_LUT(5, lut0_c5_26);	//
+	LOAD_CLR_LUT(6, lut0_c6_27);	//
+	LOAD_CLR_LUT(7, lut0_c7_28);	//
+	LOAD_XON_LUT(lut0_xon_29);    
+}
+
+void EPD_LoadLUT_zephray_lut1(void) {
+	//Stock LUTs
+	LOAD_VCM_LUT(lut1_vcom_20);
+	LOAD_CLR_LUT(0, lut1_c0_21);	//
+	LOAD_CLR_LUT(1, lut1_c1_23);	//
+	LOAD_CLR_LUT(2, lut1_c2_24);	//
+	LOAD_CLR_LUT(3, lut1_c3_22);	//
+	LOAD_CLR_LUT(4, lut1_c4_25);	//
+	LOAD_CLR_LUT(5, lut1_c5_26);	//
+	LOAD_CLR_LUT(6, lut1_c6_27);	//
+	LOAD_CLR_LUT(7, lut1_c7_28);	//
+	LOAD_XON_LUT(lut1_xon_29);    
+}
+
+/*
+ * Load Look-Up Table pad with zeros if required
+ * */
+void EPD_LoadLUT(uint8_t reg, const uint8_t* lut, int len)
+{
+	int pad;
+
+	//Calculate the required padding
+	if(reg == 0x20)
+		pad = 220 - len;
+	else if(reg == 0x29)
+		pad = 200 - len;
+	else
+		pad = 260 -len;
+
+
+	//Send data
+	EPD_7IN3F_SendCommand(reg);
+
+	for(int i = 0; i < len; i++)
+		EPD_7IN3F_SendData(lut[i]);
+
+	for(int i = 0; i < pad; i++)
+			EPD_7IN3F_SendData(0x00);
+}
+
 /******************************************************************************
 function :	Clear screen
 parameter:

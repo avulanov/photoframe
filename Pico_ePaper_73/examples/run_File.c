@@ -7,6 +7,8 @@
 #include <stdlib.h> // malloc() free()
 #include <string.h>
 
+#include <time.h>
+
 const char *fileList = "fileList.txt";          // Picture names store files
 const char *fileListNew = "fileListNew.txt";    // Sort good picture name temporarily store file
 char pathName[fileLen];                         // The name of the picture to display
@@ -98,10 +100,10 @@ static void run_cat(const char *path) {
     int i=0;
     while (f_gets(buf, sizeof buf, &fil)) 
     {
-        printf("%5d,%s", ++i,buf);
+        printf("%5d,%s", ++i, buf);
     }
 
-    printf("The number of file names read is %d",i);
+    printf("The number of file names read is %d \n",i);
     scanFileNum = i;
 
     fr = f_close(&fil);
@@ -553,6 +555,8 @@ void file_copy(char temp[fileNumber][fileLen], char templist[fileNumber/2][fileL
     memcpy(templistnew, temp[fileNumber/2], count*fileLen);
 }
 
+
+
 /* 
     function: 
         Array copy
@@ -598,6 +602,8 @@ char file_gets(char temp[][fileLen], char count, FIL* fil)
     custom_qsort(temp, 0, count-1);
     return i;
 }
+
+
 
 /* 
     function: 
@@ -670,9 +676,9 @@ void file_temporary_puts(char temp[][fileLen], char count, const char *path)
         count: Number of writes
         fil: File pointer
 */
-void file_puts(char temp[][fileLen], char count, FIL* fil)
+void file_puts(char temp[][fileLen], int count, FIL* fil)
 {
-    for(char i=0; i<count; i++)
+    for(int i=0; i<count; i++)
         f_puts(temp[i], fil);
 }
 
@@ -776,9 +782,9 @@ void file_sort()
             scanFileNum1 = 100;
     }
 
-    if(file_count < 2)
+    if(scanFileNum1)
     {
-        custom_qsort(temp, 0, scanFileNum1-1);
+        custom_qsort(temp, 0, scanFileNum-1);
         fr = f_close(&fil);
         if (FR_OK != fr) {
             printf("f_close error: %s (%d)\n", FRESULT_str(fr), fr);
@@ -788,7 +794,7 @@ void file_sort()
         if(FR_OK != fr && FR_EXIST != fr)
             panic("f_open1(%s) error: %s (%d) \n", fileList, FRESULT_str(fr), fr);
 
-        file_puts(temp, scanFileNum1, &fil);
+        file_puts(temp, scanFileNum, &fil);
 
         fr = f_close(&fil);
         if (FR_OK != fr) {
@@ -850,4 +856,66 @@ void file_sort()
 }
 
 
+/* 
+    Shuffle the image names in the file - ADDED FUNCTION by tcellerier - 2023-11
+*/
+void file_shuffle()
+{
+    char temp[fileNumber][fileLen];
 
+    run_mount();
+
+    FRESULT fr; /* Return value */
+    FIL fil;
+
+    // 1. Read filelist
+    fr = f_open(&fil, fileList, FA_READ);
+
+    if(FR_OK != fr && FR_EXIST != fr) {
+        printf("Shuffle - file open error2\r\n");
+        run_unmount();
+        return;
+    }
+
+    char buf[256];
+    int nbLines=0;
+    while (f_gets(buf, sizeof buf, &fil)) 
+    {
+        strcpy(temp[nbLines], buf);
+        nbLines++;
+    }
+    printf("Shuffle - Nb lines read: %d \n", nbLines);
+
+    fr = f_close(&fil);
+    if (FR_OK != fr) {
+        printf("Shuffle - f_close error: %s (%d)\n", FRESULT_str(fr), fr);
+    }
+
+    // Seed the random number generator
+    srand(nbLines);
+
+    // 2. Shuffle lines
+    for (int i = nbLines - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        char temp_shuffle[fileLen]; 
+        strcpy(temp_shuffle, temp[i]);
+        strcpy(temp[i], temp[j]);
+        strcpy(temp[j], temp_shuffle);
+    }
+
+    // 3. Save new list
+    fr = f_open(&fil, fileList, FA_CREATE_ALWAYS | FA_WRITE);
+    if(FR_OK != fr && FR_EXIST != fr)
+        panic("Shuffle - f_open1(%s) error: %s (%d) \n", fileList, FRESULT_str(fr), fr);
+
+    file_puts(temp, nbLines, &fil);
+    //printf("ls %s\r\n", fileList);
+    printf("Shuffle - Done\n");
+
+    fr = f_close(&fil);
+    if (FR_OK != fr) {
+        printf("Shuffle - f_close error: %s (%d)\n", FRESULT_str(fr), fr);
+    }
+
+    run_unmount();
+}

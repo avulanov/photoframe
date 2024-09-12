@@ -34,9 +34,28 @@
 #include "EPD_7in3f.h"
 #include "GUI_Paint.h"
 #include "GUI_BMPfile.h"
+#include "epd.h"
 
 #include <stdlib.h> // malloc() free()
 #include <string.h>
+
+int EPD_7in3f_display_palette(void)
+{
+    EPD_7IN3F_Init();
+    epd_disp_palette_3bpp();
+    EPD_7IN3F_Sleep();
+    return 0;
+}
+
+int EPD_7in3f_display_7colors(void)
+{
+    //EPD_7IN3F_Init();
+    EPD_7IN3F_Init_with_custom_LUT();
+    EPD_LoadLUT_zephray_lut1();
+    EPD_7IN3F_Show7Block();
+    EPD_7IN3F_Sleep();
+    return 0;
+}
 
 int EPD_7in3f_display_BMP(const char *path, float vol)
 {

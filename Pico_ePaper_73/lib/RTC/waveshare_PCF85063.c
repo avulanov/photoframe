@@ -107,56 +107,8 @@ Time_data PCF85063_GetTime()
 
 void PCF85063_alarm_Time_Enabled(Time_data time)
 {
-    if(time.seconds>59)
-    {
-        time.seconds = time.seconds - 60;
-        time.minutes = time.minutes + 1;
-    }
-    if(time.minutes>59)
-    {
-        time.minutes = time.minutes - 60;
-        time.hours = time.hours + 1;
-    }
-    if(time.hours>23)
-    {
-        time.hours = time.hours - 24;
-        time.days = time.days + 1;
-    }
-    if(time.months == 1 || time.months == 3 || time.months == 5 || time.months == 7 || time.months == 8 || time.months == 10 || time.months == 12)
-    {
-        if(time.days>31)
-        {
-            time.days = time.days - 31;
-        }
-    }
-    else if(time.months == 2)
-    {
-        if(time.years%4==0)
-        {
-            if(time.days>29)
-            {
-                time.days = time.days - 29;
-            }
-        }
-        else
-        {
-            if(time.days>28)
-            {
-                time.days = time.days - 28;
-            }
-        }
-    }
-    else
-    {
-        if(time.days>30)
-        {
-            time.days = time.days - 30;
-        }
-    }
-    // printf("%d-%d-%d %d:%d:%d\r\n",time.years,time.months,time.days,time.hours,time.minutes,time.seconds);
 	PCF85063_Write_Byte(CONTROL_2_REG, PCF85063_Read_Byte(CONTROL_2_REG)|0x80);	// Alarm on
-	PCF85063_Write_Byte(DAY_ALARM_REG, DecToBcd(time.days) & 0x7F);
-    PCF85063_Write_Byte(HOUR_ARARM_REG, DecToBcd(time.hours) & 0x7F);
+	PCF85063_Write_Byte(HOUR_ARARM_REG, DecToBcd(time.hours) & 0x7F);
 	PCF85063_Write_Byte(MINUTES_ALARM_REG, DecToBcd(time.minutes) & 0x7F);
 	PCF85063_Write_Byte(SECOND_ALARM_REG, DecToBcd(time.seconds) & 0x7F);
 }
@@ -166,8 +118,7 @@ void PCF85063_alarm_Time_Disable()
 	PCF85063_Write_Byte(HOUR_ARARM_REG   ,PCF85063_Read_Byte(HOUR_ARARM_REG)|0x80);
 	PCF85063_Write_Byte(MINUTES_ALARM_REG,PCF85063_Read_Byte(MINUTES_ALARM_REG)|0x80);
 	PCF85063_Write_Byte(SECOND_ALARM_REG ,PCF85063_Read_Byte(SECOND_ALARM_REG)|0x80);
-	PCF85063_Write_Byte(DAY_ALARM_REG, PCF85063_Read_Byte(DAY_ALARM_REG)|0x80);
-    PCF85063_Write_Byte(CONTROL_2_REG   ,PCF85063_Read_Byte(CONTROL_2_REG)&0x7F);	// Alarm OFF
+	PCF85063_Write_Byte(CONTROL_2_REG   ,PCF85063_Read_Byte(CONTROL_2_REG)&0x7F);	// Alarm OFF
 }
 
 int PCF85063_get_alarm_flag()
@@ -187,8 +138,8 @@ void PCF85063_test()
 {
     int count = 0;
 	
-	// PCF85063_SetTime_YMD(21,2,28);
-	// PCF85063_SetTime_HMS(23,59,58);
+	PCF85063_SetTime_YMD(21,2,28);
+	PCF85063_SetTime_HMS(23,59,58);
 	while(1)
 	{
 		Time_data T;
@@ -196,15 +147,15 @@ void PCF85063_test()
 		printf("%d-%d-%d %d:%d:%d\r\n",T.years,T.months,T.days,T.hours,T.minutes,T.seconds);
 		count+=1;
 		DEV_Delay_ms(1000);
-		if(count>20)
+		if(count>6)
 		break;
 	}
 }
 
 void rtcRunAlarm(Time_data time, Time_data alarmTime)
 {
-    PCF85063_SetTime_HMS(time.hours, time.minutes, time.seconds);
 	PCF85063_SetTime_YMD(time.years, time.months, time.days);
-
+	PCF85063_SetTime_HMS(time.hours, time.minutes, time.seconds);
+    
     PCF85063_alarm_Time_Enabled(alarmTime);
 }

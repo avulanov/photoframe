@@ -32,6 +32,8 @@
 #define __EPD_7IN3F_H_
 
 #include "DEV_Config.h"
+#include "LUTs.h"
+#include "lut.h"
 
 // Display resolution
 #define EPD_7IN3F_WIDTH       800
@@ -49,7 +51,17 @@ Color Index
 #define EPD_7IN3F_ORANGE  0x6	///	110
 #define EPD_7IN3F_CLEAN   0x7	///	111   unavailable  Afterimage
 
+static const uint8_t color2lut[8] = {0,2,3,1,4,5,6,7};
+#define LOAD_VCM_LUT(_lut) 			EPD_LoadLUT(0x20, _lut, sizeof(_lut))
+#define LOAD_CLR_LUT(_color, _lut)	EPD_LoadLUT(0x21 + color2lut[(_color)], _lut, sizeof(_lut))
+#define LOAD_XON_LUT(_lut) 			EPD_LoadLUT(0x29, _lut, sizeof(_lut))
+void EPD_LoadLUT(uint8_t reg, const uint8_t* lut, int len);
+
 void EPD_7IN3F_Init(void);
+void EPD_7IN3F_Init_with_custom_LUT(void);
+void EPD_LoadLUT_ts_manuel(void);
+void EPD_LoadLUT_zephray_lut0(void);
+void EPD_LoadLUT_zephray_lut1(void);
 void EPD_7IN3F_Clear(UBYTE color);
 void EPD_7IN3F_Show7Block(void);
 void EPD_7IN3F_Display(UBYTE *Image);
