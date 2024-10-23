@@ -2,8 +2,12 @@
 
 import sys
 import os.path
-from PIL import Image, ImageEnhance, ImagePalette, ImageOps
+from PIL import Image, ImageEnhance, ImagePalette, ImageOps, ExifTags, ImageDraw, ImageFont
 import argparse
+import requests
+from geopy.geocoders import Nominatim
+from geopy.geocoders import Photon
+
 
 # Create an ArgumentParser object
 parser = argparse.ArgumentParser(description='Process some images.')
@@ -19,6 +23,8 @@ parser.add_argument('--contrast', type=float, default=1.0, help='image contrast,
 parser.add_argument('--brightness', type=float, default=1.0, help='image brightness, 1.0 orignal')
 parser.add_argument('--sharpness', type=float, default=1.0, help='image sharpness, 1.0 original')
 parser.add_argument('--num_colors', type=int, default=6, help='num colors: 5 - BWRGB, 6 - BWRGBY (like Spectra 6, looks better than 7), 7 - BWRGBYO (ACeP)')
+parser.add_argument('--add_time', type=int, default=1, help='add time to image')
+parser.add_argument('--add_location', type=int, default=1, help='add location to image')
 
 # Parse command line arguments
 args = parser.parse_args()
@@ -34,6 +40,8 @@ display_contrast = args.contrast
 display_brightness = args.brightness
 display_sharpness = args.sharpness
 num_colors = args.num_colors
+add_time = args.add_time
+add_location = args.add_location
 
 # Check whether the input file exists
 if not os.path.isfile(input_filename):
@@ -42,6 +50,9 @@ if not os.path.isfile(input_filename):
 
 # Read input image
 input_image = Image.open(input_filename)
+exif = input_image._getexif()
+# Rotate the image according to the EXIF information
+input_image = ImageOps.exif_transpose(input_image)
 enhancer_color = ImageEnhance.Color(input_image)
 input_image = enhancer_color.enhance(display_color)
 enhancer_contrast = ImageEnhance.Contrast(input_image)
@@ -51,6 +62,52 @@ input_image = enhancer_brightness.enhance(display_brightness)
 enhancer_sharpness = ImageEnhance.Sharpness(input_image)
 input_image = enhancer_sharpness.enhance(display_sharpness)
 
+
+def get_exif_property(exif_data, property_name):
+    if not exif_data:
+        return None
+
+    for tag, value in exif_data.items():
+        decoded = ExifTags.TAGS.get(tag, tag)
+        if decoded == property_name:
+            return value
+    return None
+
+def get_location_name(gps_info):
+    if not gps_info:
+        return None
+    geolocator = Nominatim(user_agent="pythongeocoder")
+    def decimal_coords(coords, ref):
+        decimal_degrees = float(coords[0]) + float(coords[1]) / 60 + float(coords[2]) / 3600
+        if ref == "S" or ref =='W' :
+            decimal_degrees = -1 * decimal_degrees
+        return decimal_degrees
+    lat = decimal_coords(gps_info[2], gps_info[1])
+    lon = decimal_coords(gps_info[4], gps_info[3])
+    location = geolocator.reverse((lat, lon), exactly_one=True)
+    return location.raw['name']
+
+
+def add_text_to_image(image, text, font=None, font_size=5, text_color=(0, 0, 0), bg_color=(255, 255, 255)):
+    draw = ImageDraw.Draw(image)
+    if font is None:
+        font = ImageFont.load_default(font_size)
+    else:
+        font = ImageFont.truetype(font, font_size)
+    #font = ImageFont.truetype("arial.ttf", 100)
+    width, height = image.size
+    position = (0, 0)
+    # Calculate text size
+    left, top, right, bottom = draw.textbbox(position, text, font=font)
+    text_width = right - left
+    new_position = ((width - text_width) // 2, height - font_size - 2)
+    left, top, right, bottom = draw.textbbox(new_position, text, font=font)
+    draw.rectangle((left - 2, top - 2, right + 2, bottom + 2), fill=bg_color)
+        
+    # Draw text
+    draw.text(new_position, text, font=font, fill=text_color)
+    
+    return image
 
 # Get the original image size
 width, height = input_image.size
@@ -98,6 +155,22 @@ elif display_mode == 'cut':
 
     resized_image = ImageOps.pad(input_image.crop(box), size=(target_width, target_height), color=(255, 255, 255), centering=(0.5, 0.5))
 
+# add time and location to image
+image_location_name = ''
+image_time = ''
+if add_location:
+    gps_info = get_exif_property(exif, "GPSInfo")
+    if gps_info:
+        image_location_name = get_location_name(gps_info)
+if add_time:
+    image_time = get_exif_property(exif, "DateTimeOriginal")
+    if image_time:
+        parts = (image_time.split()[0]).split(':')
+        image_time = f"{parts[2]}/{parts[1]}/{parts[0]}"
+if image_location_name or image_time:
+    label = f"{image_location_name} {image_time}"
+    add_text_to_image(resized_image, label, font=None, font_size=14, text_color=(0, 0, 0))
+
 # Create a palette object
 pal_image = Image.new("P", (1,1))
 if num_colors == 7:
@@ -109,6 +182,7 @@ elif num_colors == 5:
   
 # The color quantization and dithering algorithms are performed, and the results are converted to RGB mode
 quantized_image = resized_image.quantize(dither=display_dither, palette=pal_image).convert('RGB')
+
 
 # Save output image
 output_filename = os.path.splitext(input_filename)[0] + '_' + display_mode + file_suffix + '.bmp'
