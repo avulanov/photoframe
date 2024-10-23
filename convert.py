@@ -7,6 +7,7 @@ import argparse
 import requests
 from geopy.geocoders import Nominatim
 from geopy.geocoders import Photon
+import time
 
 
 # Create an ArgumentParser object
@@ -84,8 +85,18 @@ def get_location_name(gps_info):
         return decimal_degrees
     lat = decimal_coords(gps_info[2], gps_info[1])
     lon = decimal_coords(gps_info[4], gps_info[3])
-    location = geolocator.reverse((lat, lon), exactly_one=True)
-    return location.raw['name']
+    location = None
+    retries = 5
+    while retries:
+        retries -= 1
+        try:
+            location = geolocator.reverse((lat, lon), exactly_one=True)
+            return location.raw['name']
+        except:
+            print(f'Geolocator not responding. Retrying in {timeout} seconds...')
+            time.sleep(timeout)
+            timeout *= 2
+    return location
 
 
 def add_text_to_image(image, text, font=None, font_size=5, text_color=(0, 0, 0), bg_color=(255, 255, 255)):
