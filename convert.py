@@ -91,7 +91,13 @@ def get_location_name(gps_info):
         retries -= 1
         try:
             location = geolocator.reverse((lat, lon), exactly_one=True)
-            return location.raw['name']
+            name = location.raw['name']
+            if not name:
+                if 'address' in location.raw:
+                    name = location.raw['address']['city']
+            if not name:
+                name = location.raw['country']
+            return name
         except:
             print(f'Geolocator not responding. Retrying in {timeout} seconds...')
             time.sleep(timeout)
@@ -180,7 +186,7 @@ if add_time:
         image_time = f"{parts[2]}/{parts[1]}/{parts[0]}"
 if image_location_name or image_time:
     label = f"{image_location_name} {image_time}"
-    add_text_to_image(resized_image, label, font=None, font_size=14, text_color=(0, 0, 0))
+    add_text_to_image(resized_image, label, font='/System/Library/Fonts/Supplemental/Arial.ttf', font_size=14, text_color=(0, 0, 0))
 
 # Create a palette object
 pal_image = Image.new("P", (1,1))
