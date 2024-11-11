@@ -17,6 +17,8 @@ parser = argparse.ArgumentParser(description='Process some images.')
 parser.add_argument('image_file', type=str, help='Input image file')
 parser.add_argument('--dir', choices=['landscape', 'portrait'], help='Image direction (landscape or portrait)')
 parser.add_argument('--file_suffix', type=str, default='_frame', help='Output file suffix')
+parser.add_argument('--save_original', type=int, default=0, help='Save original image (after crop)')
+parser.add_argument('--device', choices=['waveshare', 'philips'], default='waveshare', help='Target device (waveshare or philips)')
 parser.add_argument('--mode', choices=['scale', 'cut'], default='scale', help='Image conversion mode (scale or cut)')
 parser.add_argument('--dither', type=int, choices=[Image.NONE, Image.FLOYDSTEINBERG], default=Image.FLOYDSTEINBERG, help='Image dithering algorithm (NONE(0) or FLOYDSTEINBERG(3))')
 parser.add_argument('--color', type=float, default=2.0, help='image color saturation, 0.0 b&w, 1.0 original, 2.0 looks more vivid on ePaper')
@@ -34,6 +36,8 @@ args = parser.parse_args()
 input_filename = args.image_file
 display_direction = args.dir
 file_suffix = args.file_suffix
+save_original = args.save_original
+target_device = args.device
 display_mode = args.mode
 display_dither = Image.Dither(args.dither)
 display_color = args.color
@@ -87,16 +91,29 @@ def get_location_name(gps_info):
     lon = decimal_coords(gps_info[4], gps_info[3])
     location = None
     retries = 5
+    timeout = 1
     while retries:
         retries -= 1
         try:
             location = geolocator.reverse((lat, lon), exactly_one=True)
             name = location.raw['name']
             if not name:
-                if 'address' in location.raw:
+                if 'address' in location.raw and 'city' in location.raw['address']:
                     name = location.raw['address']['city']
             if not name:
-                name = location.raw['country']
+                if 'address' in location.raw and 'village' in location.raw['address']:
+                    name = location.raw['address']['village']
+            if not name:
+                if 'address' in location.raw and 'town' in location.raw['address']:
+                    name = location.raw['address']['town']
+            if not name:
+                if 'address' in location.raw and 'state' in location.raw['address']:
+                    name = location.raw['address']['state']
+            if not name:
+                if 'address' in location.raw and 'country' in location.raw['address']:
+                    name = location.raw['address']['country']
+            if not name:
+                name = location
             return name
         except:
             print(f'Geolocator not responding. Retrying in {timeout} seconds...')
@@ -129,17 +146,22 @@ def add_text_to_image(image, text, font=None, font_size=5, text_color=(0, 0, 0),
 # Get the original image size
 width, height = input_image.size
 
+deviceToSize = {
+    'waveshare': (800, 480),
+    'philips': (1600, 1200)
+}
+
 # Specified target size
 if display_direction:
     if display_direction == 'landscape':
-        target_width, target_height = 800, 480
+        target_width, target_height = deviceToSize[target_device]
     else:
-        target_width, target_height = 480, 800
+        target_height, target_width = deviceToSize[target_device]
 else:
     if  width > height:
-        target_width, target_height = 800, 480
+        target_width, target_height = deviceToSize[target_device]
     else:
-        target_width, target_height = 480, 800
+        target_height, target_width = deviceToSize[target_device]
     
 if display_mode == 'scale':
     # Computed scaling
@@ -204,5 +226,8 @@ quantized_image = resized_image.quantize(dither=display_dither, palette=pal_imag
 # Save output image
 output_filename = os.path.splitext(input_filename)[0] + '_' + display_mode + file_suffix + '.bmp'
 quantized_image.save(output_filename)
+if save_original:
+    output_filename = os.path.splitext(input_filename)[0] + '_' + display_mode + file_suffix + '_original.bmp'
+    resized_image.save(output_filename)
 print(f'Successfully converted {input_filename} to {output_filename}')
 
