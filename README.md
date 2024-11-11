@@ -83,3 +83,20 @@ References
 * Original converter https://files.waveshare.com/upload/e/ea/ConverTo7c_bmp.zip
 
 # Philips Tableaux
+## How to add photos
+* Recommended ways don't work
+    * According to the manual, photos can be placed in /Pictures folder on the USB drive. The device is supposed to copy them locally and use. However, it does not work and devide keep showing "insert usb with Pictures".
+    * According to the manual, device can show up as drive when connecting using microUSB. However, it does not work on MacOS.
+* Alternatively, we use service microUSB port to connect to embedded Android file system and copy files to /storage/emulated/0/Pictures/ folder
+* Install Android tooling
+    * brew install scrcpy
+    * brew install android-platform-tools
+* Connect via microUSB and check devices
+    * adb devices
+    * adb -s AUEA2412000031 shell (for shell to explore device FS)
+* Run converter `convert.py` (TODO with a different resolution)
+    * Single `python3 convert.py image.jpg`
+    * Batch `for file in /photos/*; python3 convert.py "$file"`
+    * Produces bmp files
+* Copy files
+    * adb -s AUEA2412000031 push *.bmp /storage/emulated/0/Pictures/
