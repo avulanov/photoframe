@@ -3,9 +3,12 @@
 Tools for eink photoframe
 
 ## Intro
-* Device: https://www.waveshare.com/photopainter.htm
-* 7-color: black, white, red, green, blue, yellow, orange
-* Specs: https://files.waveshare.com/upload/d/db/7.3inch_e-Paper_%28F%29_Specification.pdf 
+Currently, we use two devices both based off ACeP tech (aka Gallery, prev generation to Spectra 6)
+* Waveshare Photopainter: https://www.waveshare.com/photopainter.htm
+    * 7-color: black, white, red, green, blue, yellow, orange
+    * Specs: https://files.waveshare.com/upload/d/db/7.3inch_e-Paper_%28F%29_Specification.pdf
+* Philips Tableaux 13BDL4150IW https://www.ppds.com/en-us/display-solutions/digital-signage/philips-tableaux/13bdl4150iw-00
+    * Specs: https://www.datocms-assets.com/112519/1726686611-13bdl4150iw_00_2023-12-14_10h05m09s-pdf.pdf 
 
 ## Understanding color gamut
 * 7 colors is too few to display a photo. Dithering technique is used to propagate the error to neighboring pixels. https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
@@ -53,7 +56,9 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     EPD_7IN3F_SendData(0x5F);
     EPD_7IN3F_SendData(0x69);
 ```
-* We try to change 0x69 to 0xE9 (set 8th bit), expecting that it will enable IC to use LUT from registers. Then we hope that IC has the same registers for LUT (0x21-0x29) as in 5.65 screen and waveform looks similar (since its the same ACeP tech).
+* We try to change 0x69 to 0xE9 (set 8th bit), expecting that it will enable IC to use LUT from registers. Then we hope that IC has the same registers for LUT (0x21-0x29) as in 5.65 screen and waveform looks similar (since its the same ACeP tech). However, we've found that 0x21 register contains tables for VCom and all colors written sequentially. We tried numerous formats from different drivers data sheets. However, we could not find the right one, and only able to produce some random colors by overwriting the VCom data with some bytes.
+
+# Waveshare Photopainter
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
@@ -77,3 +82,4 @@ Source and binaries: https://github.com/tcellerier/Pico_ePaper_73/tree/main
 References
 * Original converter https://files.waveshare.com/upload/e/ea/ConverTo7c_bmp.zip
 
+# Philips Tableaux
