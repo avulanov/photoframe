@@ -212,7 +212,9 @@ if image_location_name or image_time:
 
 # Create a palette object
 pal_image = Image.new("P", (1,1))
-if num_colors == 7:
+if num_colors == 8:
+    pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0,   0,255,0,  0,0,255,  0,255,255, 255,0,255, 255,255,0) + (0,0,0)*248)
+elif num_colors == 7:
     pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,255,0, 255,128,0) + (0,0,0)*249)
 elif num_colors == 6:
     pal_image.putpalette( (0,0,0,  255,255,255,  0,255,0,   0,0,255,  255,0,0,  255,255,0,) + (0,0,0)*250)
