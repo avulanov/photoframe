@@ -94,9 +94,13 @@ References
 * Connect via microUSB and check devices
     * adb devices
     * adb -s AUEA2412000031 shell (for shell to explore device FS)
-* Run converter `convert.py` (TODO with a different resolution)
-    * Single `python3 convert.py image.jpg`
-    * Batch `for file in /photos/*; python3 convert.py "$file"`
-    * Produces bmp files
+* Run converter `convert.py`
+    * Useful parameters:
+        * "--device philips" for 1600x1200 resolution
+        * "--save_original" to save original bmp to let philips dithering (it knows the device pallette, likely 8 colors)
+        * "--color 1" no color saturation
+    * Single `python3 convert.py --device philips --save_original 1 --color 1 image.jpg`
+    * Batch `for file in /photos/*; python3 convert.py --device philips --save_original 1 --color 1 "$file"`
+    * Produces bmp files both with and w/o dithering ("_original")
 * Copy files
-    * adb -s AUEA2412000031 push *.bmp /storage/emulated/0/Pictures/
+    * adb -s AUEA2412000031 push *original.bmp /storage/emulated/0/Pictures/
