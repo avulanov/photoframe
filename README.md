@@ -105,3 +105,14 @@ References
     * Produces bmp files both with and w/o dithering ("_original")
 * Copy files
     * adb -s AUEA2412000031 push *original.bmp /storage/emulated/0/Pictures/
+* Copy config for custom time between pictures refresh (default is 30 seconds)
+    * adb -s AUEA2412000031 push config.xml /storage/emulated/0/Pictures/
+```
+  <?xml version="1.0"?>
+      <epd_config>
+      <sleep on="1"></sleep>
+      <interval second="86400"></interval>
+      <remember on="1"></remember>
+      <rotate degree="0"></rotate>
+      </epd_config> 
+```
