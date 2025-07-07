@@ -74,6 +74,7 @@ TLDR;
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
+    * Color saturation `--color 2.0` enabled by default. Default is 6 colors for ACeP screen. Use `--num_colors 5` for Spectra 6 Photopainter B.
     * Single `python3 convert.py image.jpg`
     * Batch `for file in /photos/*; python3 convert.py "$file"`
     * Produces bmp files
