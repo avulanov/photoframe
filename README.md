@@ -1,4 +1,4 @@
-# photoframe
+# Photoframe
 
 Tools for eink photoframe
 
@@ -20,7 +20,12 @@ Currently, we use the following devices both based off ACeP tech (aka Gallery, p
 * 7 colors is too few to display a photo. Dithering technique is used to propagate the error to neighboring pixels. https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
 
 ## Ways to improve image quality
-In short, we apply color saturation 2.0 and use 6 colors w/o orange.
+TLDR;
+* Waveshare (both ACeP and Spectra 6): color saturation 2.0
+* Waveshare (ACeP): use 6 colors w/o orange.
+* Waveshare (Spectra 6): use 5 colors w/o yellow
+* Philips (Spectra 6): original image
+ 
 * Image enhance
     * Using tools from https://pillow.readthedocs.io/en/stable/reference/ImageEnhance.html
     * Color saturation seems to provide visually better images when displayed on the e-ink probably due to low contrast of the screen.
@@ -30,10 +35,11 @@ In short, we apply color saturation 2.0 and use 6 colors w/o orange.
     * More algos: https://github.com/hbldh/hitherdither. Did not see much difference, maybe Atkinson lossy dithering gives marginal impact.
     * Gamma-aware: https://www.nayuki.io/page/gamma-aware-image-dithering. Human eye can distinguish shades of darker colors better. Tried in by adding conversion to linear color space to the code with multiple dithering algorithms. Did not see much difference probably due to low number of colors. `lnr = rgb / 255... lnr = np.where(lnr <= 0.04045, lnr / 12.92, ((lnr +  0.055) / 1.055)**2.4)`
 * Less colors
-    * Using 6 colors (w/o orange) seems to visually look better. Orange seems to be used a lot by dithering algorithm since it falls "between" main colors. Also, new e-ink Spectra 6 screen uses only 6 colors too.
-    * Using 5 colors (w/o orange and yellow) is worse. Yellow is one of the main colors in CMY.  
+    * ACeP: Using 6 colors (w/o orange) seems to visually look better. Orange seems to be used a lot by dithering algorithm since it falls "between" main colors. Also, new e-ink Spectra 6 screen uses only 6 colors too. Using 5 colors (w/o orange and yellow) is worse. Yellow is one of the main colors in CMY.
+    * Spectra 6: Using 5 colors (w/o yellow) is better. Yellow causes skewness in dithering due to relation to a CMYK color space (vs RGB) 
 * More colors
-    * Use custom waveform to force eink produce more colors. Discussed in a dedicated section
+    * ACeP and Spectra 6. Use custom waveform to force eink produce more colors. Discussed in a dedicated section.
+    * Philips seems to be able to use 8 base colors.
 
 ## More colors
 * Use custom waveform to force eink produce more colors. Especially, we want to get the remaining from CMY - cyan (for the blue sky) and magenta. But also, equally spaced colors in between to avoid biasing we saw for orange.
