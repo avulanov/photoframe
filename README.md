@@ -70,7 +70,7 @@ TLDR;
 ```
 * We try to change 0x69 to 0xE9 (set 8th bit), expecting that it will enable IC to use LUT from registers. Then we hope that IC has the same registers for LUT (0x21-0x29) as in 5.65 screen and waveform looks similar (since its the same ACeP tech). However, we've found that 0x21 register contains tables for VCom and all colors written sequentially. We tried numerous formats from different drivers data sheets. However, we could not find the right one, and only able to produce some random colors by overwriting the VCom data with some bytes.
 
-# Waveshare Photopainter
+# Waveshare Photopainter A & B
 ## How to add photos
 * Download jpg
 * Run converter `convert.py`
@@ -87,12 +87,14 @@ TLDR;
 * Insert flash card, press “next” button
 
 ## How to update firmware
-Photopainter B supports more than 100 photos and sorted order by default.
-
+### Photopainter A
 Original firmware supports only 100 photos and sorted order. Updated firmware supports 1000 photos and random order + different timings
 Source and binaries: https://github.com/tcellerier/Pico_ePaper_73/tree/main
 * Press RUN, then press BOOT, then release RUN, then release BOOT, the computer will pop up a USB flash drive
 * Copy firmware using `$ cp -X blink.uf2 /Volumes/RPI-RP2/`(see https://www.raspberrypi.com/news/the-ventura-problem/)
+
+### Photopainter B
+Photopainter B supports more than 100 photos and sorted order by default changing every 12 hours. Its possible to use random order and different timing using trivial changes in firmware https://www.waveshare.com/wiki/PhotoPainter_(B)
 
 References
 * Original converter https://files.waveshare.com/upload/e/ea/ConverTo7c_bmp.zip
