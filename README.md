@@ -94,7 +94,7 @@ Source and binaries: https://github.com/tcellerier/Pico_ePaper_73/tree/main
 * Copy firmware using `$ cp -X blink.uf2 /Volumes/RPI-RP2/`(see https://www.raspberrypi.com/news/the-ventura-problem/)
 
 ### Photopainter B
-Photopainter B supports more than 100 photos and sorted order by default changing every 12 hours. Its possible to use random order and different timing using trivial changes in firmware https://www.waveshare.com/wiki/PhotoPainter_(B)
+Photopainter B supports more than 100 photos and sorted order by default changing every 12 hours. Its possible to use random order and different timing using trivial changes in firmware https://www.waveshare.com/wiki/PhotoPainter_(B). Several firmware options are pre-built https://github.com/waveshareteam/PhotoPainter_B/tree/master/extra_uf2
 
 References
 * Original converter https://files.waveshare.com/upload/e/ea/ConverTo7c_bmp.zip
