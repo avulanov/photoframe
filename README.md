@@ -3,7 +3,7 @@
 Tools for eink photoframe
 
 ## Intro
-Currently, we use the following devices both based off ACeP tech (aka Gallery, prev generation to Spectra 6)
+Currently, we use the following devices both based off eink tech
 * Waveshare Photopainter: https://www.waveshare.com/photopainter.htm
     * Tech: ACeP (aka Gallery)
     * 7-color: black, white, red, green, blue, yellow, orange
