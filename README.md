@@ -21,9 +21,9 @@ Currently, we use the following devices both based off eink tech
 
 ## Ways to improve image quality
 TLDR;
-* Waveshare (both ACeP and Spectra 6): color saturation 2.0
+* Waveshare (both A & B, ACeP and Spectra 6): color saturation 2.0
 * Waveshare (ACeP): use 6 colors w/o orange.
-* Waveshare (Spectra 6): use 5 colors w/o yellow
+* Waveshare B (Spectra 6): use 5 colors w/o yellow
 * Philips (Spectra 6): original image
  
 * Image enhance
