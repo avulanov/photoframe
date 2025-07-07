@@ -3,13 +3,18 @@
 Tools for eink photoframe
 
 ## Intro
-Currently, we use two devices both based off ACeP tech (aka Gallery, prev generation to Spectra 6)
+Currently, we use the following devices both based off ACeP tech (aka Gallery, prev generation to Spectra 6)
 * Waveshare Photopainter: https://www.waveshare.com/photopainter.htm
+    * Tech: ACeP (aka Gallery)
     * 7-color: black, white, red, green, blue, yellow, orange
     * Specs: https://files.waveshare.com/upload/d/db/7.3inch_e-Paper_%28F%29_Specification.pdf
 * Philips Tableaux 13BDL4150IW https://www.ppds.com/en-us/display-solutions/digital-signage/philips-tableaux/13bdl4150iw-00
+    * Tech: Spectra 6 (new gen)
     * Specs: https://www.datocms-assets.com/112519/1726686611-13bdl4150iw_00_2023-12-14_10h05m09s-pdf.pdf
     * It does not state how many colors it has, but based on inspection it has 8: black, white, red, green, blue, light blue, magenta, yellow
+* Waveshare Photopainter-B: https://www.waveshare.com/photopainter-b.htm
+    * Tech: Spectra 6 (new gen)
+    * 6-color: black, white, red, green, blue, yellow
 
 ## Understanding color gamut
 * 7 colors is too few to display a photo. Dithering technique is used to propagate the error to neighboring pixels. https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
