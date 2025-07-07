@@ -87,6 +87,8 @@ TLDR;
 * Insert flash card, press “next” button
 
 ## How to update firmware
+Photopainter B supports more than 100 photos and sorted order by default.
+
 Original firmware supports only 100 photos and sorted order. Updated firmware supports 1000 photos and random order + different timings
 Source and binaries: https://github.com/tcellerier/Pico_ePaper_73/tree/main
 * Press RUN, then press BOOT, then release RUN, then release BOOT, the computer will pop up a USB flash drive
